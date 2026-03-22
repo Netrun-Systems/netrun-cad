@@ -1,8 +1,6 @@
 # Netrun CAD — Azure DevOps Build Pipeline
-# Windows 11 / MSVC / Qt6 build for Allie's landscape design tool
-#
-# Active Pipeline: Azure DevOps (Microsoft-hosted windows-latest)
-# Produces: portable zip artifact (no installer required)
+# Windows / MSVC / Qt6 build for Allie's landscape design tool
+# Produces: portable zip artifact
 
 trigger:
   branches:
@@ -14,128 +12,94 @@ pr:
   branches:
     include:
       - landscape-design
-      - master
 
 pool:
   vmImage: 'windows-latest'
 
 variables:
   buildConfiguration: 'Release'
-  qtVersion: '6.9.*'
-  boostVersion: '1.87.0'
-  boostDir: '$(Build.SourcesDirectory)\boost'
-  generatedDir: '$(Build.SourcesDirectory)\generated'
+  qtVersion: '6.9.0'
   artifactName: 'NetrunCAD-Win64-Portable'
 
-stages:
-  - stage: Build
-    displayName: 'Build Netrun CAD (Windows x64)'
-    jobs:
-      - job: BuildWindows
-        displayName: 'CMake + MSVC + Qt6'
-        timeoutInMinutes: 60
+steps:
+  - checkout: self
+    fetchDepth: 0
+    submodules: recursive
+    displayName: 'Checkout'
 
-        steps:
-          # ── Checkout ──────────────────────────────────────────────────────────
-          - checkout: self
-            fetchDepth: 0
-            submodules: recursive
-            displayName: 'Checkout landscape-design branch'
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.x'
+    displayName: 'Use Python 3.x'
 
-          # ── Qt6 via aqtinstall ────────────────────────────────────────────────
-          - task: UsePythonVersion@0
-            inputs:
-              versionSpec: '3.x'
-            displayName: 'Use Python 3.x'
+  - script: |
+      pip install aqtinstall
+      aqt install-qt windows desktop %QTVERSION% win64_msvc2022_64 --modules qt5compat qtimageformats qtshadertools --outputdir "%AGENT_TOOLSDIRECTORY%\Qt"
+    displayName: 'Install Qt6 via aqtinstall'
+    env:
+      QTVERSION: $(qtVersion)
 
-          - script: |
-              pip install aqtinstall
-              aqt install-qt windows desktop $(qtVersion) win64_msvc2022_64 ^
-                --modules qt5compat qtimageformats qtshadertools ^
-                --outputdir "$(Agent.ToolsDirectory)\Qt"
-            displayName: 'Install Qt6 via aqtinstall'
+  - powershell: |
+      $qtBase = Get-ChildItem -Path "$env:AGENT_TOOLSDIRECTORY\Qt" -Directory | Select-Object -First 1
+      $qtDir = Get-ChildItem -Path $qtBase.FullName -Filter "msvc2022_64" -Directory -Recurse | Select-Object -First 1
+      Write-Host "Found Qt at: $($qtDir.FullName)"
+      Write-Host "##vso[task.setvariable variable=QTDIR]$($qtDir.FullName)"
+      Write-Host "##vso[task.prependpath]$($qtDir.FullName)\bin"
+    displayName: 'Locate Qt install path'
 
-          - script: |
-              rem Find the actual Qt install path (aqt nests by version)
-              for /d %%d in ("$(Agent.ToolsDirectory)\Qt\*") do (
-                for /d %%e in ("%%d\msvc2022_64") do (
-                  echo ##vso[task.setvariable variable=QTDIR]%%e
-                )
-              )
-            displayName: 'Locate Qt install path'
-            shell: cmd
+  - script: |
+      mkdir build
+      cd build
+      cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_PREFIX_PATH="%QTDIR%" -DCMAKE_BUILD_TYPE=Release -DBUILD_LANDSCAPE_PLUGINS=ON
+    displayName: 'CMake Configure'
 
-          # ── MSBuild ───────────────────────────────────────────────────────────
-          - task: VSDevCmd@0
-            displayName: 'Set up MSVC environment'
+  - script: |
+      cd build
+      cmake --build . --config Release -- /m:8
+    displayName: 'CMake Build (Release)'
 
-          # ── Boost (headers-only for LibreCAD) ─────────────────────────────────
-          - script: |
-              curl -# -L -o boost.7z ^
-                https://archives.boost.io/release/$(boostVersion)/source/boost_1_87_0.7z
-              7z x -o. -y boost.7z
-              mkdir boost\include
-              move boost_1_87_0\boost boost\include\
-              del boost.7z
-              echo Boost headers installed.
-              dir boost\include\boost\version.hpp
-            displayName: 'Install Boost headers'
-            shell: cmd
+  - powershell: |
+      $releaseDir = "$(Build.ArtifactStagingDirectory)\NetrunCAD"
+      New-Item -ItemType Directory -Path $releaseDir -Force
+      New-Item -ItemType Directory -Path "$releaseDir\plugins" -Force
 
-          # ── CMake Configure ───────────────────────────────────────────────────
-          - script: |
-              cmake.exe -S . -B generated ^
-                -G "Visual Studio 17 2022" ^
-                -DCMAKE_BUILD_TYPE=Release ^
-                -DCMAKE_PREFIX_PATH="$(QTDIR)" ^
-                -DBoost_INCLUDE_DIR="$(boostDir)\include" ^
-                -DBoost_LIBRARY_DIRS="$(boostDir)\lib" ^
-                -DBUILD_LANDSCAPE_PLUGINS=ON ^
-                -DBUILD_TESTS=OFF
-            displayName: 'CMake Configure'
-            shell: cmd
-            env:
-              BOOST_ROOT: $(boostDir)
-              CMAKE_CXX_FLAGS: '/MP8'
+      # Copy main executable
+      Copy-Item "build\Release\LibreCAD.exe" "$releaseDir\" -ErrorAction SilentlyContinue
+      Copy-Item "build\desktop\Release\LibreCAD.exe" "$releaseDir\" -ErrorAction SilentlyContinue
 
-          # ── CMake Build ───────────────────────────────────────────────────────
-          - script: |
-              cmake.exe --build generated --config Release --parallel 8
-            displayName: 'CMake Build'
-            shell: cmd
+      # Copy Qt DLLs
+      & "$env:QTDIR\bin\windeployqt.exe" "$releaseDir\LibreCAD.exe" 2>$null
 
-          # ── windeployqt — bundle Qt DLLs ──────────────────────────────────────
-          - script: |
-              set PATH=$(QTDIR)\bin;%PATH%
-              windeployqt6.exe --release --compiler-runtime ^
-                generated\Release\LibreCAD.exe
-            displayName: 'Run windeployqt6'
-            shell: cmd
+      # Copy landscape plugins
+      Get-ChildItem -Path "build" -Filter "*.dll" -Recurse | Where-Object { $_.DirectoryName -match "landscape|plugin" } | ForEach-Object {
+        Copy-Item $_.FullName "$releaseDir\plugins\" -Force
+        Write-Host "Plugin: $($_.Name)"
+      }
 
-          # ── Copy landscape plugin DLLs into bundle ────────────────────────────
-          - script: |
-              if not exist generated\Release\plugins mkdir generated\Release\plugins
-              for /r %%a in (generated\landscape\plugins\*.dll) do (
-                copy "%%a" generated\Release\plugins\
-              )
-              echo Landscape plugin DLLs copied.
-            displayName: 'Collect landscape plugin DLLs'
-            shell: cmd
+      # Copy landscape resources
+      if (Test-Path "landscape") {
+        Copy-Item "landscape" "$releaseDir\landscape" -Recurse -Force
+      }
 
-          # ── Package as portable zip ───────────────────────────────────────────
-          - script: |
-              for /f "delims=" %%v in ('git describe --always --tags') do set GITVER=%%v
-              set ZIPNAME=NetrunCAD-%GITVER%-win64-portable.zip
-              cd generated\Release
-              7z a -tzip "$(Build.ArtifactStagingDirectory)\%ZIPNAME%" *
-              echo ##vso[task.setvariable variable=zipName]%ZIPNAME%
-            displayName: 'Package portable zip'
-            shell: cmd
+      # Copy LibreCAD resources
+      if (Test-Path "librecad\support") {
+        Copy-Item "librecad\support" "$releaseDir\support" -Recurse -Force
+      }
 
-          # ── Publish artifact ──────────────────────────────────────────────────
-          - task: PublishBuildArtifacts@1
-            displayName: 'Publish portable zip'
-            inputs:
-              pathToPublish: '$(Build.ArtifactStagingDirectory)'
-              artifactName: '$(artifactName)'
-              publishLocation: 'Container'
+      Write-Host "Package contents:"
+      Get-ChildItem "$releaseDir" -Recurse | ForEach-Object { Write-Host "  $($_.FullName.Replace($releaseDir, ''))" }
+    displayName: 'Package portable zip'
+
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: '$(Build.ArtifactStagingDirectory)\NetrunCAD'
+      includeRootFolder: true
+      archiveType: 'zip'
+      archiveFile: '$(Build.ArtifactStagingDirectory)\$(artifactName).zip'
+    displayName: 'Create zip archive'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)\$(artifactName).zip'
+      ArtifactName: '$(artifactName)'
+    displayName: 'Publish artifact'
