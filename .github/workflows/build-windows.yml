@@ -8,12 +8,12 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2022
     timeout-minutes: 60
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@main
         with:
           submodules: recursive
           fetch-depth: 0
@@ -21,42 +21,37 @@ jobs:
       - name: Install Qt6
         uses: jurplel/install-qt-action@v4
         with:
-          version: '6.7.3'
+          version: '6.9.*'
           host: 'windows'
-          target: 'desktop'
           arch: 'win64_msvc2022_64'
-          modules: 'qt5compat qtimageformats'
-          cache: true
+          target: 'desktop'
+          tools-only: 'false'
+          modules: 'qt3d qt5compat qtimageformats qtshadertools'
+          tools: 'tools_cmake'
 
-      - name: Download Boost
-        shell: powershell
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Install Boost
         run: |
-          $boostVer = "1.87.0"
-          $boostDir = "$env:GITHUB_WORKSPACE\boost"
-          $boostUrl = "https://archives.boost.io/release/$boostVer/source/boost_$($boostVer.Replace('.','_')).zip"
-          Write-Host "Downloading Boost $boostVer..."
-          Invoke-WebRequest -Uri $boostUrl -OutFile "boost.zip" -TimeoutSec 300
-          Expand-Archive -Path "boost.zip" -DestinationPath $boostDir -Force
-          $boostRoot = Get-ChildItem -Path $boostDir -Directory | Select-Object -First 1
-          Write-Host "Boost at: $($boostRoot.FullName)"
-          echo "BOOST_ROOT=$($boostRoot.FullName)" >> $env:GITHUB_ENV
+          curl -# -L -o boost.7z https://archives.boost.io/release/1.87.0/source/boost_1_87_0.7z
+          7z x -o. -y boost.7z
+          mkdir -p boost/include
+          mv boost_1_87_0/boost boost/include/
+          rm boost.7z
+        shell: bash
 
       - name: CMake Configure
-        shell: cmd
         run: |
-          mkdir build
-          cd build
-          cmake .. -G "Visual Studio 17 2022" -A x64 ^
-            -DCMAKE_PREFIX_PATH="%Qt6_DIR%" ^
-            -DBOOST_ROOT="%BOOST_ROOT%" ^
-            -DCMAKE_BUILD_TYPE=Release ^
-            -DBUILD_LANDSCAPE_PLUGINS=ON
+          cmake.exe -S . -B generated -G "Visual Studio 17 2022" -DBoost_INCLUDE_DIR=%BOOST_ROOT%/include -DBoost_LIBRARY_DIRS=%BOOST_ROOT%/lib -DBUILD_LANDSCAPE_PLUGINS=ON
+        shell: cmd
+        env:
+          BOOST_ROOT: boost
+          CMAKE_CXX_FLAGS: " /MP8"
 
       - name: CMake Build
+        run: cmake --build generated --config Release
         shell: cmd
-        run: |
-          cd build
-          cmake --build . --config Release -- /m:8
 
       - name: Package
         shell: powershell
@@ -65,23 +60,23 @@ jobs:
           New-Item -ItemType Directory -Path $releaseDir -Force
           New-Item -ItemType Directory -Path "$releaseDir\plugins" -Force
 
-          # Find and copy the executable
-          $exe = Get-ChildItem -Path "build" -Filter "LibreCAD.exe" -Recurse | Select-Object -First 1
+          # Find executable
+          $exe = Get-ChildItem -Path "generated" -Filter "LibreCAD.exe" -Recurse | Select-Object -First 1
           if ($exe) {
             Copy-Item $exe.FullName "$releaseDir\LibreCAD.exe"
-            Write-Host "Found exe: $($exe.FullName)"
+            Write-Host "Exe: $($exe.FullName)"
           } else {
-            Write-Host "ERROR: LibreCAD.exe not found!"
-            Get-ChildItem -Path "build" -Filter "*.exe" -Recurse | ForEach-Object { Write-Host "  Found: $($_.FullName)" }
+            Write-Host "LibreCAD.exe not found in generated/"
+            Get-ChildItem -Path "generated" -Filter "*.exe" -Recurse | ForEach-Object { Write-Host "  $($_.FullName)" }
             exit 1
           }
 
           # Deploy Qt DLLs
-          & "$env:Qt6_DIR\bin\windeployqt.exe" "$releaseDir\LibreCAD.exe" --release --no-translations 2>$null
+          & windeployqt "$releaseDir\LibreCAD.exe" --release --no-translations 2>$null
 
           # Copy landscape plugins
-          Get-ChildItem -Path "build" -Filter "*.dll" -Recurse | Where-Object {
-            $_.DirectoryName -match "landscape|plugin" -and $_.Name -notmatch "^Qt"
+          Get-ChildItem -Path "generated" -Filter "*.dll" -Recurse | Where-Object {
+            $_.DirectoryName -match "landscape" -and $_.Name -notmatch "^Qt"
           } | ForEach-Object {
             Copy-Item $_.FullName "$releaseDir\plugins\" -Force
             Write-Host "Plugin: $($_.Name)"
@@ -96,13 +91,9 @@ jobs:
           if (Test-Path "librecad\support") {
             Copy-Item "librecad\support" "$releaseDir\support" -Recurse -Force
           }
-          if (Test-Path "librecad\resources") {
-            Copy-Item "librecad\resources" "$releaseDir\resources" -Recurse -Force
-          }
 
-          Write-Host "Package size:"
-          $size = (Get-ChildItem "$releaseDir" -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB
-          Write-Host "  $([math]::Round($size, 1)) MB"
+          $size = [math]::Round((Get-ChildItem "$releaseDir" -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB, 1)
+          Write-Host "Package: $size MB"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
