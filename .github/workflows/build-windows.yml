@@ -1,0 +1,112 @@
+name: Build Netrun CAD (Windows x64)
+
+on:
+  push:
+    branches: [landscape-design, master]
+  pull_request:
+    branches: [landscape-design]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Install Qt6
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.7.3'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_msvc2022_64'
+          modules: 'qt5compat qtimageformats'
+          cache: true
+
+      - name: Download Boost
+        shell: powershell
+        run: |
+          $boostVer = "1.87.0"
+          $boostDir = "$env:GITHUB_WORKSPACE\boost"
+          $boostUrl = "https://archives.boost.io/release/$boostVer/source/boost_$($boostVer.Replace('.','_')).zip"
+          Write-Host "Downloading Boost $boostVer..."
+          Invoke-WebRequest -Uri $boostUrl -OutFile "boost.zip" -TimeoutSec 300
+          Expand-Archive -Path "boost.zip" -DestinationPath $boostDir -Force
+          $boostRoot = Get-ChildItem -Path $boostDir -Directory | Select-Object -First 1
+          Write-Host "Boost at: $($boostRoot.FullName)"
+          echo "BOOST_ROOT=$($boostRoot.FullName)" >> $env:GITHUB_ENV
+
+      - name: CMake Configure
+        shell: cmd
+        run: |
+          mkdir build
+          cd build
+          cmake .. -G "Visual Studio 17 2022" -A x64 ^
+            -DCMAKE_PREFIX_PATH="%Qt6_DIR%" ^
+            -DBOOST_ROOT="%BOOST_ROOT%" ^
+            -DCMAKE_BUILD_TYPE=Release ^
+            -DBUILD_LANDSCAPE_PLUGINS=ON
+
+      - name: CMake Build
+        shell: cmd
+        run: |
+          cd build
+          cmake --build . --config Release -- /m:8
+
+      - name: Package
+        shell: powershell
+        run: |
+          $releaseDir = "$env:GITHUB_WORKSPACE\package\NetrunCAD"
+          New-Item -ItemType Directory -Path $releaseDir -Force
+          New-Item -ItemType Directory -Path "$releaseDir\plugins" -Force
+
+          # Find and copy the executable
+          $exe = Get-ChildItem -Path "build" -Filter "LibreCAD.exe" -Recurse | Select-Object -First 1
+          if ($exe) {
+            Copy-Item $exe.FullName "$releaseDir\LibreCAD.exe"
+            Write-Host "Found exe: $($exe.FullName)"
+          } else {
+            Write-Host "ERROR: LibreCAD.exe not found!"
+            Get-ChildItem -Path "build" -Filter "*.exe" -Recurse | ForEach-Object { Write-Host "  Found: $($_.FullName)" }
+            exit 1
+          }
+
+          # Deploy Qt DLLs
+          & "$env:Qt6_DIR\bin\windeployqt.exe" "$releaseDir\LibreCAD.exe" --release --no-translations 2>$null
+
+          # Copy landscape plugins
+          Get-ChildItem -Path "build" -Filter "*.dll" -Recurse | Where-Object {
+            $_.DirectoryName -match "landscape|plugin" -and $_.Name -notmatch "^Qt"
+          } | ForEach-Object {
+            Copy-Item $_.FullName "$releaseDir\plugins\" -Force
+            Write-Host "Plugin: $($_.Name)"
+          }
+
+          # Copy landscape resources
+          if (Test-Path "landscape") {
+            Copy-Item "landscape" "$releaseDir\landscape" -Recurse -Force
+          }
+
+          # Copy LibreCAD resources
+          if (Test-Path "librecad\support") {
+            Copy-Item "librecad\support" "$releaseDir\support" -Recurse -Force
+          }
+          if (Test-Path "librecad\resources") {
+            Copy-Item "librecad\resources" "$releaseDir\resources" -Recurse -Force
+          }
+
+          Write-Host "Package size:"
+          $size = (Get-ChildItem "$releaseDir" -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB
+          Write-Host "  $([math]::Round($size, 1)) MB"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NetrunCAD-Win64-Portable
+          path: package/NetrunCAD/
+          retention-days: 30
