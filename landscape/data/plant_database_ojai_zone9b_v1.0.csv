@@ -1,0 +1,86 @@
+common_name,botanical_name,family,usda_zone_min,usda_zone_max,water_use,sun_exposure,mature_height_ft,mature_spread_ft,native_to_california,drought_tolerant,deer_resistant,fire_resistant,symbol_file
+# ==============================================================================
+# NETRUN CAD - Plant Database: Ojai Valley / Ventura County / USDA Zone 9b
+# Water use codes: VL=Very Low  L=Low  M=Moderate  H=High  (WUCOLS convention)
+# Sun codes: FS=Full Sun  PS=Part Shade  SH=Shade  FS/PS=Tolerates both
+# Sources: WUCOLS V, Las Pilitas Nursery, Theodore Payne Foundation, Calscape,
+#          USDA PLANTS Database, UC Davis Arboretum All-Stars
+# Last updated: 2026-03-22
+# ==============================================================================
+#
+# --- NATIVE CALIFORNIA TREES ---
+#
+Toyon,Heteromeles arbutifolia,Rosaceae,7,11,L,FS/PS,8,8,TRUE,TRUE,TRUE,TRUE,tree_toyon.dxf
+Coast Live Oak,Quercus agrifolia,Fagaceae,9,11,L,FS/PS,70,70,TRUE,TRUE,FALSE,TRUE,tree_oak_coast_live.dxf
+Valley Oak,Quercus lobata,Fagaceae,5,10,L,FS,70,100,TRUE,TRUE,FALSE,TRUE,tree_oak_valley.dxf
+Blue Oak,Quercus douglasii,Fagaceae,5,10,VL,FS,50,60,TRUE,TRUE,FALSE,TRUE,tree_oak_blue.dxf
+California Sycamore,Platanus racemosa,Platanaceae,7,10,M,FS,100,70,TRUE,FALSE,FALSE,FALSE,tree_sycamore_ca.dxf
+California Black Walnut,Juglans californica,Juglandaceae,8,11,L,FS,30,40,TRUE,TRUE,FALSE,FALSE,tree_walnut_ca.dxf
+California Bay Laurel,Umbellularia californica,Lauraceae,7,10,L,FS/PS,75,40,TRUE,TRUE,TRUE,FALSE,tree_bay_laurel.dxf
+California Buckeye,Aesculus californica,Sapindaceae,6,10,VL,FS/PS,20,30,TRUE,TRUE,FALSE,FALSE,tree_buckeye.dxf
+Lemonade Berry (tree form),Rhus integrifolia,Anacardiaceae,9,11,VL,FS,15,15,TRUE,TRUE,TRUE,TRUE,tree_lemonade_berry.dxf
+Desert Willow,Chilopsis linearis,Bignoniaceae,7,11,L,FS,25,20,TRUE,TRUE,FALSE,FALSE,tree_desert_willow.dxf
+#
+# --- MEDITERRANEAN AND DROUGHT-TOLERANT TREES ---
+#
+Olive,Olea europaea,Oleaceae,8,11,L,FS,30,30,FALSE,TRUE,TRUE,TRUE,tree_olive.dxf
+Mediterranean Fan Palm,Chamaerops humilis,Arecaceae,8,11,L,FS,15,12,FALSE,TRUE,FALSE,TRUE,tree_palm_med_fan.dxf
+Canary Island Date Palm,Phoenix canariensis,Arecaceae,9,11,L,FS,60,25,FALSE,TRUE,FALSE,TRUE,tree_palm_date_canary.dxf
+Mexican Fan Palm,Washingtonia robusta,Arecaceae,9,11,L,FS,100,15,FALSE,TRUE,FALSE,FALSE,tree_palm_mexican_fan.dxf
+California Fan Palm,Washingtonia filifera,Arecaceae,8,11,L,FS,75,15,TRUE,TRUE,FALSE,FALSE,tree_palm_ca_fan.dxf
+Jacaranda,Jacaranda mimosifolia,Bignoniaceae,9,11,L,FS,40,40,FALSE,TRUE,FALSE,FALSE,tree_jacaranda.dxf
+African Sumac,Searsia lancea,Anacardiaceae,8,11,VL,FS,25,30,FALSE,TRUE,TRUE,TRUE,tree_african_sumac.dxf
+Palo Verde,Parkinsonia aculeata,Fabaceae,8,11,VL,FS,30,25,FALSE,TRUE,FALSE,FALSE,tree_palo_verde.dxf
+Australian Willow,Geijera parviflora,Rutaceae,8,11,L,FS,25,20,FALSE,TRUE,TRUE,TRUE,tree_australian_willow.dxf
+Ginkgo,Ginkgo biloba,Ginkgoaceae,3,9,M,FS,80,40,FALSE,FALSE,FALSE,FALSE,tree_ginkgo.dxf
+Italian Cypress,Cupressus sempervirens,Cupressaceae,7,11,L,FS,70,6,FALSE,TRUE,TRUE,TRUE,tree_cypress_italian.dxf
+#
+# --- NATIVE CALIFORNIA SHRUBS ---
+#
+Ceanothus (California Lilac),Ceanothus spp.,Rhamnaceae,8,10,VL,FS,4,8,TRUE,TRUE,FALSE,TRUE,shrub_ceanothus.dxf
+Manzanita,Arctostaphylos spp.,Ericaceae,7,10,VL,FS,4,6,TRUE,TRUE,FALSE,TRUE,shrub_manzanita.dxf
+California Sagebrush,Artemisia californica,Asteraceae,8,11,VL,FS,4,6,TRUE,TRUE,TRUE,TRUE,shrub_sagebrush.dxf
+Purple Sage,Salvia leucophylla,Lamiaceae,8,11,VL,FS,5,6,TRUE,TRUE,TRUE,TRUE,shrub_salvia_leucophylla.dxf
+Black Sage,Salvia mellifera,Lamiaceae,8,11,VL,FS,6,6,TRUE,TRUE,TRUE,TRUE,shrub_salvia_mellifera.dxf
+White Sage,Salvia apiana,Lamiaceae,9,11,VL,FS,5,5,TRUE,TRUE,TRUE,TRUE,shrub_white_sage.dxf
+Lemonade Berry,Rhus integrifolia,Anacardiaceae,9,11,VL,FS,10,10,TRUE,TRUE,TRUE,TRUE,shrub_lemonade_berry.dxf
+Sugarbush,Rhus ovata,Anacardiaceae,8,11,VL,FS,10,10,TRUE,TRUE,TRUE,TRUE,shrub_sugarbush.dxf
+Coffeeberry,Frangula californica,Rhamnaceae,7,10,L,FS/PS,8,8,TRUE,TRUE,FALSE,TRUE,shrub_coffeeberry.dxf
+Buckwheat,Eriogonum fasciculatum,Polygonaceae,7,11,VL,FS,2,4,TRUE,TRUE,TRUE,TRUE,shrub_buckwheat.dxf
+Island Snapdragon,Gambelia speciosa,Plantaginaceae,9,11,L,FS/PS,4,6,TRUE,TRUE,FALSE,FALSE,shrub_island_snapdragon.dxf
+#
+# --- MEDITERRANEAN AND DROUGHT-TOLERANT SHRUBS ---
+#
+Lavender,Lavandula spp.,Lamiaceae,5,9,L,FS,3,4,FALSE,TRUE,TRUE,TRUE,shrub_lavender.dxf
+Rosemary,Salvia rosmarinus,Lamiaceae,7,11,L,FS,5,5,FALSE,TRUE,TRUE,TRUE,shrub_rosemary.dxf
+Mexican Sage,Salvia leucantha,Lamiaceae,8,11,L,FS,4,5,FALSE,TRUE,TRUE,FALSE,shrub_salvia_leucantha.dxf
+Autumn Sage,Salvia greggii,Lamiaceae,6,11,L,FS,3,3,FALSE,TRUE,TRUE,FALSE,shrub_salvia_greggii.dxf
+Texas Sage,Leucophyllum frutescens,Scrophulariaceae,7,11,VL,FS,6,6,FALSE,TRUE,TRUE,TRUE,shrub_texas_sage.dxf
+Pride of Madeira,Echium candicans,Boraginaceae,9,11,L,FS,6,8,FALSE,TRUE,FALSE,FALSE,shrub_echium.dxf
+Rockrose,Cistus spp.,Cistaceae,8,11,L,FS,4,5,FALSE,TRUE,FALSE,TRUE,shrub_rockrose.dxf
+Bougainvillea,Bougainvillea spp.,Nyctaginaceae,9,11,VL,FS,20,20,FALSE,TRUE,FALSE,FALSE,shrub_bougainvillea.dxf
+Lantana,Lantana camara,Verbenaceae,8,11,VL,FS,4,6,FALSE,TRUE,FALSE,FALSE,shrub_lantana.dxf
+Agave,Agave spp.,Asparagaceae,8,11,VL,FS,4,8,FALSE,TRUE,TRUE,TRUE,shrub_agave.dxf
+Aloe,Aloe vera / Aloe arborescens,Asphodelaceae,9,11,VL,FS/PS,3,3,FALSE,TRUE,FALSE,FALSE,shrub_aloe.dxf
+Prickly Pear Cactus,Opuntia ficus-indica,Cactaceae,8,11,VL,FS,10,10,FALSE,TRUE,TRUE,FALSE,shrub_prickly_pear.dxf
+Senita Cactus,Lophocereus schottii,Cactaceae,9,11,VL,FS,20,6,FALSE,TRUE,FALSE,FALSE,shrub_senita.dxf
+#
+# --- GROUNDCOVERS AND LOW PLANTS ---
+#
+Creeping Sage,Salvia sonomensis,Lamiaceae,7,10,VL,FS/PS,1,4,TRUE,TRUE,TRUE,TRUE,gc_creeping_sage.dxf
+Yarrow,Achillea millefolium,Asteraceae,3,9,L,FS,2,2,TRUE,TRUE,FALSE,TRUE,gc_yarrow.dxf
+Coyote Brush (low form),Baccharis pilularis,Asteraceae,7,10,VL,FS,2,6,TRUE,TRUE,FALSE,TRUE,gc_coyote_brush.dxf
+Deer Grass,Muhlenbergia rigens,Poaceae,6,11,L,FS/PS,3,4,TRUE,TRUE,TRUE,TRUE,gc_deer_grass.dxf
+Blue Oat Grass,Helictochloa sempervirens,Poaceae,4,9,L,FS,2,2,FALSE,TRUE,FALSE,FALSE,gc_blue_oat_grass.dxf
+Purple Fountain Grass,Pennisetum setaceum,Poaceae,8,11,L,FS,4,4,FALSE,TRUE,FALSE,FALSE,gc_fountain_grass.dxf
+Blue Fescue,Festuca glauca,Poaceae,4,8,L,FS,1,1,FALSE,TRUE,FALSE,FALSE,gc_blue_fescue.dxf
+Dwarf Coyote Brush,Baccharis pilularis 'Twin Peaks',Asteraceae,7,10,VL,FS,1,6,TRUE,TRUE,FALSE,TRUE,gc_baccharis_twin_peaks.dxf
+Ice Plant,Delosperma cooperi,Aizoaceae,5,10,VL,FS,1,2,FALSE,TRUE,FALSE,FALSE,gc_ice_plant.dxf
+Gazania,Gazania rigens,Asteraceae,9,11,L,FS,1,1,FALSE,TRUE,FALSE,FALSE,gc_gazania.dxf
+#
+# --- PERENNIALS AND ACCENT PLANTS ---
+#
+Toyon (groundcover cultivar),Heteromeles arbutifolia 'Davis Gold',Rosaceae,7,11,L,FS/PS,4,5,TRUE,TRUE,TRUE,TRUE,gc_toyon_davis_gold.dxf
+Hummingbird Sage,Salvia spathacea,Lamiaceae,7,10,L,PS/SH,2,4,TRUE,TRUE,FALSE,FALSE,gc_hummingbird_sage.dxf
+California Poppy,Eschscholzia californica,Papaveraceae,6,10,VL,FS,1,1,TRUE,TRUE,FALSE,FALSE,gc_ca_poppy.dxf
+Red Hot Poker,Kniphofia uvaria,Asphodelaceae,5,9,L,FS,3,2,FALSE,FALSE,FALSE,FALSE,gc_red_hot_poker.dxf
