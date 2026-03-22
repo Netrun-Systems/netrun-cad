@@ -1,0 +1,119 @@
+# Netrun CAD — AutoCAD LT 2014 Compatible Command Aliases
+# Drop this file into your LibreCAD support directory as librecad.alias
+# or copy these entries into your existing alias file.
+#
+# Format: <alias><tab><command>
+# Lines starting with # are comments
+#
+# === DRAW COMMANDS ===
+l	line
+pl	polyline
+pline	polyline
+c	circle
+a	arc
+el	ellipse
+rec	rectangle
+rect	rectangle
+pol	polygon
+spl	spline
+ml	polyline
+xl	line
+ray	line
+h	hatch
+bh	hatch
+bo	polyline
+
+# === MODIFY COMMANDS ===
+m	move
+mv	move
+co	copy
+cp	copy
+mi	mirror
+o	offset
+ar	array
+ro	rotate
+sc	scale
+s	stretch
+tr	trim
+ex	extend
+br	break
+cha	chamfer
+f	fillet
+x	explode
+e	erase
+del	erase
+
+# === DRAW TOOLS ===
+di	dist
+dst	dist
+me	measure
+id	snapcoord
+li	properties
+ls	properties
+pr	properties
+area	calcarea
+
+# === DISPLAY ===
+z	zoomin
+za	zoomauto
+ze	zoomauto
+zw	zoomwindow
+zp	zoomprevious
+p	zoompan
+re	redraw
+regen	redraw
+
+# === LAYER ===
+la	layerdialog
+lay	layerdialog
+
+# === BLOCK ===
+b	createblock
+i	insertblock
+in	insertblock
+w	createblock
+
+# === DIMENSION ===
+dli	dimlinear
+dal	dimaligned
+dra	dimradial
+ddi	dimdiametric
+dan	dimangular
+dle	dimleader
+dco	dimcontinue
+
+# === TEXT ===
+t	text
+mt	mtext
+dt	text
+st	text
+
+# === SNAP ===
+os	snapmiddle
+end	snapendpoint
+mid	snapmiddle
+cen	snapcenter
+int	snapintersection
+per	snapperpendicular
+tan	snaptangent
+nea	snapnearest
+
+# === EDIT ===
+u	undo
+redo	redo
+oops	undo
+
+# === FILE ===
+new	filenew
+open	fileopen
+save	filesave
+saveas	filesaveas
+plot	fileprint
+print	fileprint
+
+# === LANDSCAPE DESIGN SHORTCUTS (Netrun additions) ===
+# These will activate when the landscape plugins are installed
+plant	plantdatabase
+irr	irrigation
+gis	gisimport
+scan	kiriimport

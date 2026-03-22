@@ -1,0 +1,9 @@
+This directory will contain DXF template files with pre-configured layers
+for landscape design plans. Templates include:
+
+- residential_landscape.dxf — Standard residential plan (layers, title block)
+- commercial_landscape.dxf — Commercial plan template
+- planting_plan.dxf — Planting plan with plant schedule table
+- irrigation_plan.dxf — Irrigation layout template
+
+These will be generated programmatically with the correct layer setup.
