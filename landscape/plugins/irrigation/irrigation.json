@@ -1,0 +1,12 @@
+{
+    "IID": "org.librecad.PluginInterface/1.0",
+    "MetaData": {
+        "Name": "Irrigation Planning",
+        "Description": "Sprinkler and drip head placement with coverage visualization and GPM calculations",
+        "Version": "0.1.0",
+        "Author": "Netrun Systems",
+        "License": "GPL-2.0-or-later",
+        "Category": "Landscape Design",
+        "Keys": ["irrigation", "sprinkler", "dripcircle", "coverage"]
+    }
+}

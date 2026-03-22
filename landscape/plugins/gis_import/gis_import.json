@@ -1,0 +1,12 @@
+{
+    "IID": "org.librecad.PluginInterface/1.0",
+    "MetaData": {
+        "Name": "GIS Import",
+        "Description": "Import GeoTIFF, Shapefiles, and KML/KMZ files as LibreCAD entities",
+        "Version": "0.1.0",
+        "Author": "Netrun Systems",
+        "License": "GPL-2.0-or-later",
+        "Category": "Landscape Design",
+        "Keys": ["gisimport", "importshp", "importkml"]
+    }
+}

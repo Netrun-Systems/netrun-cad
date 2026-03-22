@@ -1676,6 +1676,15 @@ endif()
 add_subdirectory(libraries/lciconengine)
 add_subdirectory(plugins)
 
+# Netrun landscape design plugins (see landscape/plugins/registry.json)
+option(BUILD_LANDSCAPE_PLUGINS "Build Netrun landscape design plugins" ON)
+if(BUILD_LANDSCAPE_PLUGINS)
+    add_subdirectory(landscape/plugins/gis_import)
+    add_subdirectory(landscape/plugins/kiri_import)
+    add_subdirectory(landscape/plugins/plant_database)
+    add_subdirectory(landscape/plugins/irrigation)
+endif()
+
 option(BUILD_TESTS "Build unit tests for LibreCAD" OFF)
 
 if(BUILD_TESTS)

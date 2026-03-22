@@ -1,0 +1,12 @@
+{
+    "IID": "org.librecad.PluginInterface/1.0",
+    "MetaData": {
+        "Name": "Plant Database",
+        "Description": "Searchable plant catalog with block symbols, zone data, and planting schedule generation",
+        "Version": "0.1.0",
+        "Author": "Netrun Systems",
+        "License": "GPL-2.0-or-later",
+        "Category": "Landscape Design",
+        "Keys": ["plantdb", "insertplant", "plantschedule"]
+    }
+}

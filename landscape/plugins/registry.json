@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0",
+  "maintainer": "Netrun Systems",
+  "plugins": [
+    {
+      "name": "gis_import",
+      "displayName": "GIS Import",
+      "version": "0.1.0",
+      "description": "Import GeoTIFF, Shapefiles (.shp), KML/KMZ files as LibreCAD entities",
+      "dependencies": ["gdal"],
+      "commands": ["gisimport", "importshp", "importkml"],
+      "status": "planned",
+      "iid": "org.netrun.netrun-cad.gis_import"
+    },
+    {
+      "name": "kiri_import",
+      "displayName": "KIRI Scan Import",
+      "version": "0.1.0",
+      "description": "Import 3D point cloud exports from KIRI Engine iOS app; project to 2D plan view",
+      "dependencies": [],
+      "commands": ["kiriimport", "scanview"],
+      "status": "planned",
+      "iid": "org.netrun.netrun-cad.kiri_import"
+    },
+    {
+      "name": "plant_database",
+      "displayName": "Plant Database",
+      "version": "0.1.0",
+      "description": "Searchable plant catalog with block symbols, zone data, and planting schedule generation",
+      "dependencies": ["sqlite3"],
+      "commands": ["plantdb", "insertplant", "plantschedule"],
+      "status": "planned",
+      "iid": "org.netrun.netrun-cad.plant_database"
+    },
+    {
+      "name": "irrigation",
+      "displayName": "Irrigation Planning",
+      "version": "0.1.0",
+      "description": "Sprinkler and drip head placement tools with coverage circle visualization and GPM calculations",
+      "dependencies": [],
+      "commands": ["irrigation", "sprinkler", "dripcircle", "coverage"],
+      "status": "planned",
+      "iid": "org.netrun.netrun-cad.irrigation"
+    },
+    {
+      "name": "autocad_compat",
+      "displayName": "AutoCAD Compatibility",
+      "version": "1.0.0",
+      "description": "AutoCAD LT 2014 command aliases and keybindings for Allie's muscle memory",
+      "dependencies": [],
+      "commands": [],
+      "status": "ready",
+      "iid": "org.netrun.netrun-cad.autocad_compat",
+      "notes": "Implemented via rs_commands.cpp aliases; no separate plugin DLL needed for phase 1"
+    }
+  ]
+}
