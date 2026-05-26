@@ -1,3 +1,22 @@
+# ⚠️ DEPRECATED — Netrun Systems fork parked 2026-05-26
+
+> **This fork of [LibreCAD](https://github.com/LibreCAD/LibreCAD) is parked.**
+> Netrun Systems is no longer maintaining a desktop CAD product.
+>
+> **Canonical Netrun CAD product → [netrun-cad-web](https://github.com/Netrun-Systems/netrun-cad-web)**
+> (iPad + Apple Pencil-first browser CAD, live at <https://cad.netrunsystems.com>).
+>
+> The `landscape-design` branch in this repo was an early Netrun experiment with the
+> LibreCAD codebase and is not under active development. For Netrun's CAD product
+> roadmap, planting libraries, GIS basemaps, KIRI scan import, and the iPad-first
+> workflow that Netrun is actually shipping, go to `netrun-cad-web`.
+>
+> If you arrived here looking for LibreCAD itself, the upstream project is at
+> <https://github.com/LibreCAD/LibreCAD>. This fork tracks no upstream changes and
+> should not be used as a LibreCAD distribution.
+
+---
+
 # LibreCAD [![Build Status](https://travis-ci.org/LibreCAD/LibreCAD.svg?branch=master)](https://travis-ci.org/LibreCAD/LibreCAD) 
 
 [→ **Download** ←](https://github.com/LibreCAD/LibreCAD/wiki/Download)
